@@ -3,14 +3,14 @@
 from src.assistant_bot_cli import AssistantCLI, Command
 from src.assistant_bot_handlers import AssistantBotHandlers
 from src.assistant_bot_storage import AssistantBotStorage
-
+from src.notes import Notes
 
 def init_bot():
     """Run the assistant bot CLI loop."""
     cli = AssistantCLI()
     storage = AssistantBotStorage()
-    book = storage.load_data()
-    handlers = AssistantBotHandlers(book)
+    book,notes = storage.load_data()
+    handlers = AssistantBotHandlers(book, notes)
 
     command_actions = {
         Command.ADD: (handlers.add_contact, True, cli.success_color),
@@ -20,6 +20,8 @@ def init_bot():
         Command.ADD_BIRTHDAY: (handlers.add_birthday, True, cli.success_color),
         Command.SHOW_BIRTHDAY: (handlers.show_birthday, True, cli.warning_color),
         Command.BIRTHDAYS: (handlers.show_birthdays, False, cli.warning_color),
+        Command.ADD_NOTE: (handlers.add_note, True, cli.success_color),
+        Command.SHOW_NOTES: (handlers.show_notes, False, cli.warning_color),
     }
 
     cli.print_message("Welcome to the assistant bot!", cli.info_color)
@@ -51,4 +53,4 @@ def init_bot():
         result = handler(args) if requires_args else handler()
         cli.print_message(result, color)
 
-    storage.save_data(book)
+    storage.save_data((book, notes))

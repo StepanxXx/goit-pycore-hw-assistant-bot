@@ -1,7 +1,7 @@
 """Command handler class for the assistant bot."""
 
 from tabulate import tabulate
-
+from src.notes import Notes
 from src.address_book import AddressBook, Record
 from src.input_error import input_error
 
@@ -9,8 +9,22 @@ from src.input_error import input_error
 class AssistantBotHandlers:
     """Encapsulates the contact management operations."""
 
-    def __init__(self, book: AddressBook) -> None:
+    def __init__(self, book: AddressBook, notes: Notes) -> None:
         self.book = book
+        self.notes = notes    
+
+    @input_error
+    def add_note(self, args):
+        note = " ".join(args)
+        self.notes.add(note)
+        return "Note added." 
+
+    @input_error
+    def show_notes(self):
+        if self.notes:
+            rows = [[key + 1, note] for key,note in enumerate(self.notes)]
+            return tabulate(rows, headers=["№","Note"])
+        return "Notes are empty."
 
     @input_error
     def add_contact(self, args):
