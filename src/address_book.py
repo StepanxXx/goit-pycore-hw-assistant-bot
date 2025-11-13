@@ -1,7 +1,6 @@
 from collections import UserDict
 from datetime import datetime, date, timedelta
 from typing import List
-import re
 
 class Field:
     def __init__(self, value):
@@ -27,43 +26,28 @@ class Phone(Field):
         if not isinstance(value, str):
             raise ValueError("Phone number must be a string")
         cleaned_value = value.strip()
-        if cleaned_value.isdigit() and len(cleaned_value) == 12:
+        if cleaned_value.isdigit() and len(cleaned_value) == 10:
+            self._value = cleaned_value
             super().__init__(cleaned_value)
             return
-        raise ValueError("Phone must contain 12 characters and only numbers")
-    
-class Email(Field):
-    def __init__(self, value: str):
-        if not isinstance(value, str):
-            raise ValueError("Email must be a string")
-        cleaned_value = value.strip()
-        regex_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}$'
-        if re.fullmatch(regex_pattern, cleaned_value):
-            super().__init__(cleaned_value)
-            return
-        raise ValueError("Invalid email.")
+        raise ValueError("Phone must contain 10 characters and only numbers")
 
 class Birthday(Field):
     def __init__(self, value: str):
         try:
             birthday_date = datetime.strptime(value, "%d.%m.%Y").date()
-            if birthday_date > datetime.now().date():
-                raise ValueError("Date must be in the past.")
             super().__init__(birthday_date)
         except ValueError as exc:
             raise ValueError("Invalid date format. Use DD.MM.YYYY") from exc
-
+    
     def __str__(self):
-        return self.value.strftime("%d.%m.%Y")
+        return f"{self.value.strftime("%d.%m.%Y")}"
 
 class Record:
     def __init__(self, name: str):
         self.name = Name(name)
-        self.phones: List[Phone] = []
-        self.birthday: Birthday = None
-        self.address: str = None
-        self.emails: List[Email] = []
-        
+        self.phones = []
+        self.birthday = None
 
     def add_phone(self, phone_number: str) -> None:
         for phone in self.phones:
@@ -86,48 +70,22 @@ class Record:
             if phone_number == str(phone):
                 return phone_number
 
-    def add_email(self, email_value: str) -> None:
-        for email in self.emails:
-            if email_value == str(email):
-                return
-        self.emails.append(Email(email_value))
-
-    def remove_email(self, email_value: str) -> None:
-        for index, email in enumerate(self.emails):
-            if email_value == str(email):
-                self.emails.pop(index)
-
-    def edit_email(self, old_email_value: str, new_email_value: str) -> None:
-        for index, email in enumerate(self.emails):
-            if old_email_value == str(email):
-                self.phones[index] = Email(new_email_value)
-
-    def find_email(self, email_value: str) -> str | None:
-        for email in self.emails:
-            if email_value == str(email):
-                return email_value
-
-
     def add_birthday(self, birthday_value: str) -> None:
         self.birthday = Birthday(birthday_value)
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, \
-            address: {self.address} \
-            phones: {'; '.join(p.value for p in self.phones)} \
-            emails: {'; '.join(p.value for p in self.emails)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 class Congratulation:
     def __init__(self, name: str, congratulation_date: str):
         self.name = name
         self.congratulation_date = congratulation_date
-
+    
     def __str__(self):
         return f"{self.name}: {self.congratulation_date}"
-
+    
     def __repr__(self):
-        return f"Congratulation(name = \"{self.name}\"" \
-            ", congratulation_date = \"{self.congratulation_date}\")"
+        return f"Congratulation(name = \"{self.name}\", congratulation_date = \"{self.congratulation_date}\")"
 
 class AddressBook(UserDict):
     def add_record(self, contact: Record) -> None:
@@ -194,11 +152,8 @@ if __name__ == "__main__":
 
     # Створення запису для John
     john_record = Record("John")
-    john_record.add_phone("123456789012")
-    john_record.add_phone("555555555512")
-    john_record.add_email("tttt@gmail.com")
-    john_record.add_email("bbb@gmail.com")
-    john_record.address = "address address address"
+    john_record.add_phone("1234567890")
+    john_record.add_phone("5555555555")
     john_record.add_birthday("03.11.1985")
 
     # Додавання запису John до адресної книги
@@ -206,7 +161,7 @@ if __name__ == "__main__":
 
     # Створення та додавання нового запису для Jane
     jane_record = Record("Jane")
-    jane_record.add_phone("987654321012")
+    jane_record.add_phone("9876543210")
     jane_record.add_birthday("05.11.2000")
     book.add_record(jane_record)
 
@@ -217,12 +172,12 @@ if __name__ == "__main__":
     print(book.get_upcoming_birthdays())
     # Знаходження та редагування телефону для John
     john = book.find("John")
-    john.edit_phone("123456789012", "111222333312")
+    john.edit_phone("1234567890", "1112223333")
 
     print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
     # Пошук конкретного телефону у записі John
-    found_phone = john.find_phone("555555555512")
+    found_phone = john.find_phone("5555555555")
     print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
 
     # Видалення запису Jane
