@@ -24,7 +24,8 @@ class Command(str, Enum):
     HELLO = "hello"
     EXIT = "exit"
     CLOSE = "close"
-
+    ADD_NOTE = "add-note"
+    SHOW_NOTES = "show-notes"
 
 class FirstWordCompleter(Completer):
     """Completer that suggests commands only for the first word."""
