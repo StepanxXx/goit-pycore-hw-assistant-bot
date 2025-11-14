@@ -138,9 +138,9 @@ class AddressBook(UserDict):
             return self.data[name]
         return None
 
-    def delete(self, name: str) -> None:
+    def delete(self, name: str) -> Record | None:
         if name in self.data:
-            self.pop(name)
+            return self.data.pop(name)
 
     def __get_birthday_this_year(self, birthday, year) -> None:
         try:

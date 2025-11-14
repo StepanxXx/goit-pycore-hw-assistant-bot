@@ -16,6 +16,7 @@ class Command(str, Enum):
 
     HELLO = "hello"
     ADD = "add"
+    DELETE = "delete"
     CHANGE_PHONE = "change-phone"
     PHONES = "phones"
     ADD_EMAIL = "add-email"
