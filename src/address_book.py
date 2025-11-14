@@ -100,7 +100,7 @@ class Record:
     def edit_email(self, old_email_value: str, new_email_value: str) -> None:
         for index, email in enumerate(self.emails):
             if old_email_value == str(email):
-                self.phones[index] = Email(new_email_value)
+                self.emails[index] = Email(new_email_value)
 
     def find_email(self, email_value: str) -> str | None:
         for email in self.emails:
