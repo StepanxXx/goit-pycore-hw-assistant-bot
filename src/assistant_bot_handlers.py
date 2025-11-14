@@ -150,11 +150,20 @@ class AssistantBotHandlers:
         return str(contact.birthday)
 
     @input_error
-    def show_birthdays(self):
-        """Show birthdays that will occur within the next week."""
+    def show_birthdays(self, args):
+        """Show birthdays that will occur within the next count_days."""
+        if not args:
+            return "Days count is required."
+        count_days = args[0]
+        if not count_days.isdigit():
+            return "Days count must be a positive number."
+        days = int(count_days)
+        if days <= 0:
+            return "Days count must be greater than zero."
+
         rows = [
             [congratulation.name, congratulation.congratulation_date]
-            for congratulation in self.book.get_upcoming_birthdays()
+            for congratulation in self.book.get_upcoming_birthdays(days)
         ]
         if not rows:
             return "No upcoming birthdays."

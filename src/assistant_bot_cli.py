@@ -1,6 +1,7 @@
 """CLI helpers, command definitions, and styling for the assistant bot."""
 
 from enum import Enum
+from textwrap import dedent
 from typing import List, Optional, Tuple
 
 from colorama import Fore, Style as ColoramaStyle, init as colorama_init
@@ -66,11 +67,35 @@ class AssistantCLI:
         self.success_color = Fore.LIGHTGREEN_EX
         self.warning_color = Fore.YELLOW
         self.error_color = Fore.RED
+        self.main_menu = dedent(
+            """
+            Main menu:
+              hello — greet the bot
+              add <name> <phone> — create a contact or add a phone
+              change-phone <name> <old> <new> — replace phone number
+              phones <name> — show contact phones
+              add-email <name> <email> — add an email
+              emails <name> — show contact emails
+              change-email <name> <old> <new> — replace an email
+              set-address <name> <address> — set or update the address
+              add-birthday <name> <DD.MM.YYYY> — add a birthday
+              show-birthday <name> — show the birthday
+              birthdays <days> — get upcoming congratulations
+              all — display the full address book
+              add-note <text> — add a note
+              show-notes — list all notes
+              exit | close — quit the program
+            """
+        ).strip()
 
     def print_message(self, message: str, color: Optional[str] = None) -> None:
         """Print a message to stdout with color highlighting."""
         applied_color = color or self.default_color
         print(f"\n{applied_color}{message}{ColoramaStyle.RESET_ALL}\n")
+
+    def print_main_menu(self) -> None:
+        """Display the available commands."""
+        self.print_message(self.main_menu, self.info_color)
 
     def get_user_input(self) -> str:
         """Return user input read using prompt_toolkit for better UX."""

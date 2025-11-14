@@ -24,12 +24,13 @@ def init_bot():
         Command.ALL: (handlers.show_all, False, cli.warning_color),
         Command.ADD_BIRTHDAY: (handlers.add_birthday, True, cli.success_color),
         Command.SHOW_BIRTHDAY: (handlers.show_birthday, True, cli.warning_color),
-        Command.BIRTHDAYS: (handlers.show_birthdays, False, cli.warning_color),
+        Command.BIRTHDAYS: (handlers.show_birthdays, True, cli.warning_color),
         Command.ADD_NOTE: (handlers.add_note, True, cli.success_color),
         Command.SHOW_NOTES: (handlers.show_notes, False, cli.warning_color),
     }
 
     cli.print_message("Welcome to the assistant bot!", cli.info_color)
+    cli.print_main_menu()
 
     while True:
         user_input = cli.get_user_input()
