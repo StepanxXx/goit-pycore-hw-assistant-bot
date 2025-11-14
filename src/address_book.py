@@ -3,6 +3,7 @@ from datetime import datetime, date, timedelta
 from typing import List
 import re
 
+
 class Field:
     def __init__(self, value):
         self._value = None
@@ -19,8 +20,10 @@ class Field:
     def __str__(self):
         return str(self.value)
 
+
 class Name(Field):
     pass
+
 
 class Phone(Field):
     def __init__(self, value: str):
@@ -31,7 +34,8 @@ class Phone(Field):
             super().__init__(cleaned_value)
             return
         raise ValueError("Phone must contain 12 characters and only numbers")
-    
+
+
 class Email(Field):
     def __init__(self, value: str):
         if not isinstance(value, str):
@@ -42,6 +46,7 @@ class Email(Field):
             super().__init__(cleaned_value)
             return
         raise ValueError("Invalid email.")
+
 
 class Birthday(Field):
     def __init__(self, value: str):
@@ -56,6 +61,7 @@ class Birthday(Field):
     def __str__(self):
         return self.value.strftime("%d.%m.%Y")
 
+
 class Record:
     def __init__(self, name: str):
         self.name = Name(name)
@@ -63,7 +69,6 @@ class Record:
         self.birthday: Birthday = None
         self.address: str = None
         self.emails: List[Email] = []
-        
 
     def add_phone(self, phone_number: str) -> None:
         for phone in self.phones:
@@ -107,7 +112,6 @@ class Record:
             if email_value == str(email):
                 return email_value
 
-
     def add_birthday(self, birthday_value: str) -> None:
         self.birthday = Birthday(birthday_value)
 
@@ -116,6 +120,7 @@ class Record:
             address: {self.address} \
             phones: {'; '.join(p.value for p in self.phones)} \
             emails: {'; '.join(p.value for p in self.emails)}"
+
 
 class Congratulation:
     def __init__(self, name: str, congratulation_date: str):
@@ -128,6 +133,7 @@ class Congratulation:
     def __repr__(self):
         return f"Congratulation(name = \"{self.name}\"" \
             ", congratulation_date = \"{self.congratulation_date}\")"
+
 
 class AddressBook(UserDict):
     def add_record(self, contact: Record) -> None:
@@ -178,6 +184,23 @@ class AddressBook(UserDict):
                 result.append(Congratulation(name, birthday_date.strftime("%d.%m.%Y")))
 
         return result
+
+    def search(self, query: str):
+        results = []
+        for record in self.data.values():
+            if query.lower() in record.name.value.lower():
+                results.append(record)
+                continue
+            for phone in record.phones:
+                if query in phone.value:
+                    results.append(record)
+                    break
+            if hasattr(record, "emails"):
+                for email in record.emails:
+                    if query.lower() in email.value.lower():
+                        results.append(record)
+                        break
+        return results
 
 
 if __name__ == "__main__":
