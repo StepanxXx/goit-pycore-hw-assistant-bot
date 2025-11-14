@@ -7,3 +7,9 @@ class Notes(UserList):
 
     def show(self):
         return self.data 
+    
+    def note_edit(self, index: int, new_note: str):
+        self.data[index] = new_note
+       
+    def delete(self, index: int):
+        self.data.pop(index)

@@ -28,6 +28,8 @@ def init_bot():
         Command.BIRTHDAYS: (handlers.show_birthdays, True, cli.warning_color),
         Command.ADD_NOTE: (handlers.add_note, True, cli.success_color),
         Command.SHOW_NOTES: (handlers.show_notes, False, cli.warning_color),
+        Command.EDIT_NOTE: (handlers.edit_note, True, cli.success_color),
+        Command.DELETE_NOTE: (handlers.delete_note, True, cli.success_color),
     }
 
     cli.print_message("Welcome to the assistant bot!", cli.info_color)
