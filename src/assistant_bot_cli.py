@@ -14,18 +14,22 @@ colorama_init(autoreset=True)
 class Command(str, Enum):
     """Supported commands for the assistant bot."""
 
+    HELLO = "hello"
     ADD = "add"
-    CHANGE = "change"
-    PHONE = "phone"
+    CHANGE_PHONE = "change-phone"
+    PHONES = "phones"
+    ADD_EMAIL = "add-email"
+    EMAILS = "emails"
+    CHANGE_EMAIL = "change-email"
+    SET_ADDRESS = "set-address"
     ALL = "all"
     ADD_BIRTHDAY = "add-birthday"
     SHOW_BIRTHDAY = "show-birthday"
     BIRTHDAYS = "birthdays"
-    HELLO = "hello"
-    EXIT = "exit"
-    CLOSE = "close"
     ADD_NOTE = "add-note"
     SHOW_NOTES = "show-notes"
+    EXIT = "exit"
+    CLOSE = "close"
 
 class FirstWordCompleter(Completer):
     """Completer that suggests commands only for the first word."""
@@ -66,7 +70,7 @@ class AssistantCLI:
     def print_message(self, message: str, color: Optional[str] = None) -> None:
         """Print a message to stdout with color highlighting."""
         applied_color = color or self.default_color
-        print(f"{applied_color}{message}{ColoramaStyle.RESET_ALL}")
+        print(f"\n{applied_color}{message}{ColoramaStyle.RESET_ALL}\n")
 
     def get_user_input(self) -> str:
         """Return user input read using prompt_toolkit for better UX."""
