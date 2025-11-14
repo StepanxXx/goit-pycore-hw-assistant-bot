@@ -43,6 +43,14 @@ class AssistantBotHandlers:
         return message
     
     @input_error
+    def delete_contact(self, args):
+        name, *_ = args
+        contact = self.book.delete(name)
+        if contact is None:
+            return f"Contact \"{name}\" is not exists."
+        return "Contact deleted."
+    
+    @input_error
     def add_email(self, args):
         name, email, *_ = args
         contact = self.book.find(name)

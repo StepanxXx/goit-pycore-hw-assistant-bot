@@ -17,6 +17,7 @@ class Command(str, Enum):
 
     HELLO = "hello"
     ADD = "add"
+    DELETE = "delete"
     CHANGE_PHONE = "change-phone"
     PHONES = "phones"
     ADD_EMAIL = "add-email"
@@ -72,6 +73,7 @@ class AssistantCLI:
             Main menu:
               hello — greet the bot
               add <name> <phone> — create a contact or add a phone
+              delete <name> — remove a contact from the address book
               change-phone <name> <old> <new> — replace phone number
               phones <name> — show contact phones
               add-email <name> <email> — add an email
