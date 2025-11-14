@@ -157,14 +157,7 @@ class AddressBook(UserDict):
         birthday_next_year = self.__get_birthday_this_year(birthday, today.year + 1)
         return birthday_next_year
 
-    def __get_congratulation_date(self, birthday_date):
-        weekday = birthday_date.weekday()
-        if weekday >= 5:
-            days_to_monday = 7 - weekday
-            return birthday_date + timedelta(days=days_to_monday)
-        return birthday_date
-
-    def get_upcoming_birthdays(self) -> List[Congratulation]:
+    def get_upcoming_birthdays(self, count_days: int = 7) -> List[Congratulation]:
         today = datetime.today().date()
         result: List[Congratulation] = []
 
@@ -181,9 +174,8 @@ class AddressBook(UserDict):
                 continue
 
             delta_days = (birthday_date - today).days
-            if 0 <= delta_days <= 7:
-                congratulation = self.__get_congratulation_date(birthday_date)
-                result.append(Congratulation(name, congratulation.strftime("%d.%m.%Y")))
+            if 0 <= delta_days <= count_days:
+                result.append(Congratulation(name, birthday_date.strftime("%d.%m.%Y")))
 
         return result
 
