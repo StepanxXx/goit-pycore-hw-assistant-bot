@@ -73,6 +73,7 @@ class AssistantCLI:
             Main menu:
               hello — greet the bot
               add <name> <phone> — create a contact or add a phone
+              delete <name> — remove a contact from the address book
               change-phone <name> <old> <new> — replace phone number
               phones <name> — show contact phones
               add-email <name> <email> — add an email
