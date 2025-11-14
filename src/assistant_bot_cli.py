@@ -30,8 +30,11 @@ class Command(str, Enum):
     BIRTHDAYS = "birthdays"
     ADD_NOTE = "add-note"
     SHOW_NOTES = "show-notes"
+    EDIT_NOTE = "edit-note"
+    DELETE_NOTE = "delete-note"
     EXIT = "exit"
     CLOSE = "close"
+
 
 class FirstWordCompleter(Completer):
     """Completer that suggests commands only for the first word."""
@@ -86,6 +89,8 @@ class AssistantCLI:
               all — display the full address book
               add-note <text> — add a note
               show-notes — list all notes
+              edit-note <№> — note editing
+              delete-note <№> — delete note 
               exit | close — quit the program
             """
         ).strip()

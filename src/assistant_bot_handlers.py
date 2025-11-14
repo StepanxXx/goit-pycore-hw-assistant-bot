@@ -27,6 +27,27 @@ class AssistantBotHandlers:
             rows = [[key + 1, note] for key,note in enumerate(self.notes)]
             return tabulate(rows, headers=["№","Note"], tablefmt="plain")
         return "Notes are empty."
+    
+    @input_error
+    def edit_note(self, args):
+        index, *new_note = args
+        note = " ".join(new_note)
+        real_index = int(index) - 1
+        if not note:
+            return "Notes are empty!"
+        if not (0 <= real_index < len(self.notes)):
+            return "There isn`t corresponding note for this number."
+        self.notes.note_edit(real_index, note)
+        return "Note added."
+
+    @input_error
+    def delete_note(self, args):
+        index = int(args[0]) - 1
+        if 0 <= index < len(self.notes):
+            self.notes.delete(index)
+        else:
+            return "There isn`t corresponding note for this number."
+        return "Note deleted."
 
     @input_error
     def add_contact(self, args):
