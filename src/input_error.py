@@ -6,22 +6,22 @@ from typing import Callable, Dict
 errors: Dict[str, Dict[str, str]] = {
     "ValueError": {
         "add_contact": "Give me name and phone please.",
-        "change_contact": "Give me name and phone please.",
-        "show_phone": "Invalid name format.",
+        "change_phone": "Give me name and phone please.",
+        "show_phones": "Invalid name format.",
     },
     "IndexError": {
         "add_contact": "Give me name and phone please.",
-        "change_contact": "Give me name and phone please.",
-        "show_phone": "Enter user name",
+        "change_phone": "Give me name and phone please.",
+        "show_phones": "Enter user name",
     },
     "KeyError": {
-        "change_contact": "Contact not found.",
-        "show_phone": "Contact not found."
+        "change_phone": "Contact not found.",
+        "show_phones": "Contact not found."
     },
     "TypeError": {
         "add_contact": "Invalid argument types. Name and phone must be text.",
-        "change_contact": "Invalid argument types. Name and phone must be text.",
-        "show_phone": "Invalid argument type for name."
+        "change_phone": "Invalid argument types. Name and phone must be text.",
+        "show_phones": "Invalid argument type for name."
     }
 }
 
