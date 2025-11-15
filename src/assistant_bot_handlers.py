@@ -11,6 +11,7 @@ class AssistantBotHandlers:
 
     def __init__(self, book: AddressBook) -> None:
         self.book = book
+        self.notes: list[str] = []   # сховище нотаток
 
     @input_error
     def add_contact(self, args):
@@ -93,3 +94,39 @@ class AssistantBotHandlers:
         if not rows:
             return "No upcoming birthdays."
         return tabulate(rows, headers=["Name", "Congratulation date"], tablefmt="plain")
+
+    @input_error
+    def add_note(self, args):
+        """Add a new text note."""
+        note_text = " ".join(args).strip()
+        if not note_text:
+            raise ValueError("Note text is empty.")
+        self.notes.append(note_text)
+        return "Note added."
+
+    @input_error
+    def show_notes(self):
+        """Show all notes as a numbered list."""
+        if not self.notes:
+            return "No notes available."
+        rows = [[idx + 1, note] for idx, note in enumerate(self.notes)]
+        return tabulate(rows, headers=["#", "Note"], tablefmt="plain")
+
+    @input_error
+    def find_note(self, args):
+        """Find notes that contain the given text (case-insensitive search)."""
+        query = " ".join(args).strip()
+        if not query:
+            raise ValueError("Search query is empty.")
+
+        matches = [
+            (idx + 1, note)
+            for idx, note in enumerate(self.notes)
+            if query.lower() in note.lower()
+        ]
+
+        if not matches:
+            return f"No notes found for '{query}'."
+
+        rows = [[idx, note] for idx, note in matches]
+        return tabulate(rows, headers=["#", "Note"], tablefmt="plain")

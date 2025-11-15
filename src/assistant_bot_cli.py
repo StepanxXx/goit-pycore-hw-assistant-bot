@@ -21,6 +21,13 @@ class Command(str, Enum):
     ADD_BIRTHDAY = "add-birthday"
     SHOW_BIRTHDAY = "show-birthday"
     BIRTHDAYS = "birthdays"
+
+    # --- команди для нотаток ---
+    ADD_NOTE = "add-note"
+    SHOW_NOTES = "show-notes"
+    FIND_NOTE = "find-note"
+    # ----------------------------
+
     HELLO = "hello"
     EXIT = "exit"
     CLOSE = "close"
@@ -86,3 +93,4 @@ class AssistantCLI:
             return Command(cmd), args
         except ValueError:
             return None, args
+
