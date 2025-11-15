@@ -53,8 +53,8 @@ class Email(Field):
         if not isinstance(value, str):
             raise ValueError("Email must be a string")
         cleaned_value = value.strip()
-        regex_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}$'
-        if re.fullmatch(regex_pattern, cleaned_value):
+        regex_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        if re.fullmatch(regex_pattern, cleaned_value, flags=re.IGNORECASE):
             super().__init__(cleaned_value)
             return
         raise ValueError("Invalid email.")
@@ -66,11 +66,11 @@ class Birthday(Field):
         """Parse a birthday string and ensure it is not a future date."""
         try:
             birthday_date = datetime.strptime(value, "%d.%m.%Y").date()
-            if birthday_date > datetime.now().date():
-                raise ValueError("Date must be in the past.")
-            super().__init__(birthday_date)
         except ValueError as exc:
             raise ValueError("Invalid date format. Use DD.MM.YYYY") from exc
+        if birthday_date > datetime.now().date():
+                raise ValueError("Date must be in the past.")
+        super().__init__(birthday_date)
 
     def __str__(self):
         """Return the birthday formatted back to DD.MM.YYYY."""
