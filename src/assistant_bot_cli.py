@@ -1,6 +1,7 @@
 """CLI helpers, command definitions, and styling for the assistant bot."""
 
 from enum import Enum
+from textwrap import dedent
 from typing import List, Optional, Tuple
 
 from colorama import Fore, Style as ColoramaStyle, init as colorama_init
@@ -14,14 +15,30 @@ colorama_init(autoreset=True)
 class Command(str, Enum):
     """Supported commands for the assistant bot."""
 
+    HELLO = "hello"
     ADD = "add"
-    CHANGE = "change"
-    PHONE = "phone"
+    DELETE = "delete"
+    CHANGE_PHONE = "change-phone"
+    PHONES = "phones"
+    SEARCH = "search"
+    ADD_EMAIL = "add-email"
+    EMAILS = "emails"
+    CHANGE_EMAIL = "change-email"
+    SET_ADDRESS = "set-address"
     ALL = "all"
     ADD_BIRTHDAY = "add-birthday"
     SHOW_BIRTHDAY = "show-birthday"
     BIRTHDAYS = "birthdays"
-    HELLO = "hello"
+    ADD_NOTE = "add-note"
+    SHOW_NOTES = "show-notes"
+    FIND_NOTE = "find-note"
+    EDIT_NOTE = "edit-note"
+    DELETE_NOTE = "delete-note"
+    ADD_NOTE_TAG = "add-note-tag"
+    DELETE_NOTE_TAG = "delete-note-tag"
+    FIND_NOTE_BY_TAG = "find-note-by-tag"
+    SHOW_NOTES_ORDERED_BY_TAG_ASC = "show-notes-ordered-by-tag-asc"
+    SHOW_NOTES_ORDERED_BY_TAG_DESC = "show-notes-ordered-by-tag-desc"
     EXIT = "exit"
     CLOSE = "close"
 
@@ -61,11 +78,45 @@ class AssistantCLI:
         self.success_color = Fore.LIGHTGREEN_EX
         self.warning_color = Fore.YELLOW
         self.error_color = Fore.RED
+        self.main_menu = dedent(
+            """
+            Main menu:
+              hello — greet the bot
+              add <name> <phone> — create a contact or add a phone
+              delete <name> — remove a contact from the address book
+              search <query> — find contacts by name, phone, or email fragment
+              change-phone <name> <old> <new> — replace phone number
+              phones <name> — show contact phones
+              add-email <name> <email> — add an email
+              emails <name> — show contact emails
+              change-email <name> <old> <new> — replace an email
+              set-address <name> <address> — set or update the address
+              add-birthday <name> <DD.MM.YYYY> — add a birthday
+              show-birthday <name> — show the birthday
+              birthdays <days> — get upcoming congratulations
+              all — display the full address book
+              add-note <text> — add a note
+              show-notes — list all notes
+              find-note <text> — search notes by text
+              edit-note <№> — note editing
+              delete-note <№> — delete note
+              add-note-tag <№> <tag> — attach a tag to a note
+              delete-note-tag <№> <tag> — remove a tag from a note
+              find-note-by-tag <tag> — search notes by tag
+              show-notes-ordered-by-tag-asc — notes sorted ascending by tag
+              show-notes-ordered-by-tag-desc — notes sorted descending by tag
+              exit | close — quit the program
+            """
+        ).strip()
 
     def print_message(self, message: str, color: Optional[str] = None) -> None:
         """Print a message to stdout with color highlighting."""
         applied_color = color or self.default_color
-        print(f"{applied_color}{message}{ColoramaStyle.RESET_ALL}")
+        print(f"\n{applied_color}{message}{ColoramaStyle.RESET_ALL}\n")
+
+    def print_main_menu(self) -> None:
+        """Display the available commands."""
+        self.print_message(self.main_menu, self.info_color)
 
     def get_user_input(self) -> str:
         """Return user input read using prompt_toolkit for better UX."""
