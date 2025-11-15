@@ -40,6 +40,20 @@ def init_bot():
         Command.SHOW_NOTES_ORDERED_BY_TAG_DESC: \
             (handlers.show_notes_tag_desc_sorted, False, cli.warning_color),
     }
+    mutating_commands = {
+        Command.ADD,
+        Command.DELETE,
+        Command.ADD_EMAIL,
+        Command.CHANGE_EMAIL,
+        Command.SET_ADDRESS,
+        Command.CHANGE_PHONE,
+        Command.ADD_BIRTHDAY,
+        Command.ADD_NOTE,
+        Command.EDIT_NOTE,
+        Command.DELETE_NOTE,
+        Command.ADD_NOTE_TAG,
+        Command.DELETE_NOTE_TAG,
+    }
 
     cli.print_message("Welcome to the assistant bot!", cli.info_color)
     cli.print_main_menu()
@@ -70,5 +84,8 @@ def init_bot():
         handler, requires_args, color = action
         result = handler(args) if requires_args else handler()
         cli.print_message(result, color)
+
+        if command in mutating_commands:
+            storage.save_data((book, notes))
 
     storage.save_data((book, notes))
