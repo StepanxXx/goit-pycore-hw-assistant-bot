@@ -48,6 +48,25 @@ class AssistantBotHandlers:
         else:
             return "There isn`t corresponding note for this number."
         return "Note deleted."
+    
+    @input_error
+    def find_note(self, args):
+        """Find notes that contain the given text (case-insensitive search)."""
+        query = " ".join(args).strip()
+        if not query:
+            raise ValueError("Search query is empty.")
+
+        matches = [
+            (idx + 1, note)
+            for idx, note in enumerate(self.notes)
+            if query.lower() in note.lower()
+        ]
+
+        if not matches:
+            return f"No notes found for '{query}'."
+
+        rows = [[idx, note] for idx, note in matches]
+        return tabulate(rows, headers=["#", "Note"], tablefmt="plain")
 
     @input_error
     def add_contact(self, args):
