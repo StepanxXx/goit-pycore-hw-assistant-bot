@@ -16,6 +16,7 @@ def init_bot():
     command_actions = {
         Command.ADD: (handlers.add_contact, True, cli.success_color),
         Command.DELETE: (handlers.delete_contact, True, cli.info_color),
+        Command.SEARCH: (handlers.search_contact, True, cli.info_color),
         Command.ADD_EMAIL: (handlers.add_email, True, cli.success_color),
         Command.EMAILS: (handlers.show_emails, True, cli.warning_color),
         Command.CHANGE_EMAIL: (handlers.change_email, True, cli.success_color),

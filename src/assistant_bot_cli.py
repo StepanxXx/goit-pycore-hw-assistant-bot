@@ -20,6 +20,7 @@ class Command(str, Enum):
     DELETE = "delete"
     CHANGE_PHONE = "change-phone"
     PHONES = "phones"
+    SEARCH = "search"
     ADD_EMAIL = "add-email"
     EMAILS = "emails"
     CHANGE_EMAIL = "change-email"
@@ -78,6 +79,7 @@ class AssistantCLI:
               hello — greet the bot
               add <name> <phone> — create a contact or add a phone
               delete <name> — remove a contact from the address book
+              search <query> — find contacts by name, phone, or email fragment
               change-phone <name> <old> <new> — replace phone number
               phones <name> — show contact phones
               add-email <name> <email> — add an email
