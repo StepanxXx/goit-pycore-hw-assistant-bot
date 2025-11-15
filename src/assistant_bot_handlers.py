@@ -30,8 +30,8 @@ class AssistantBotHandlers:
     def show_notes(self):
         """Return the full notes list formatted as a readable table."""
         if self.notes:
-            rows = [[key + 1, note] for key,note in enumerate(self.notes)]
-            return tabulate(rows, headers=["№","Note"], tablefmt="plain")
+            rows = self.notes.show()
+            return tabulate(rows, headers=["№","Tags","Note"], tablefmt="plain")
         return "Notes are empty."
 
     @input_error
@@ -44,7 +44,7 @@ class AssistantBotHandlers:
             return "Note text is empty."
         if not 0 <= real_index < len(self.notes):
             return "No note found for this number."
-        self.notes.note_edit(real_index, note)
+        self.notes.edit(real_index, note)
         return "Note updated."
 
     @input_error
@@ -60,17 +60,63 @@ class AssistantBotHandlers:
     @input_error
     def find_note(self, args):
         """Find notes that contain the given text (case-insensitive search)."""
-        query = " ".join(args).strip()
+        query = " ".join(args)
         if not query:
             return "Search query is empty."
-
         matches = self.notes.find(query)
-
         if not matches:
             return f"No notes found for '{query}'."
+        return tabulate(matches, headers=["№","Tags","Note"], tablefmt="plain")
 
-        rows = [[idx, note] for idx, note in matches]
-        return tabulate(rows, headers=["№", "Note"], tablefmt="plain")
+    @input_error
+    def add_note_tag(self, args):
+        """Append a tag to the note addressed by its displayed index."""
+        index, *new_tag = args
+        tag = " ".join(new_tag)
+        real_index = int(index) - 1
+        if not tag:
+            return "Tag text is empty."
+        if not 0 <= real_index < len(self.notes):
+            return "No note found for this number."
+        self.notes.add_tag(real_index, tag)
+        return "Note updated."
+
+    @input_error
+    def delete_note_tag(self, args):
+        """Remove the provided tag from the selected note."""
+        index, *tag_list = args
+        tag = " ".join(tag_list)
+        real_index = int(index) - 1
+        if not tag:
+            return "Tag text is empty."
+        if not 0 <= real_index < len(self.notes):
+            return "No note found for this number."
+        self.notes.delete_tag(real_index, tag)
+        return "Tag deleted."
+
+    @input_error
+    def find_note_by_tag(self, args):
+        """Find and list notes whose tag set contains the provided tag."""
+        tag = " ".join(args)
+        if not tag:
+            return "Search tag is empty."
+        matches = self.notes.find_by_tag(tag)
+        if not matches:
+            return f"No notes found for tag '{tag}'."
+        return tabulate(matches, headers=["№","Tags","Note"], tablefmt="plain")
+
+    @input_error
+    def show_notes_tag_sorted(self, reverse: bool = False):
+        """Display all notes sorted by their tag string, asc by default."""
+        if self.notes:
+            rows = self.notes.sort_by_tag(reverse)
+            return tabulate(rows, headers=["№","Tags","Note"], tablefmt="plain")
+        return "Notes are empty."
+
+    @input_error
+    def show_notes_tag_desc_sorted(self):
+        """Display all notes desc sorted by their tag string"""
+        return self.show_notes_tag_sorted(reverse = True)
 
     @input_error
     def add_contact(self, args):
