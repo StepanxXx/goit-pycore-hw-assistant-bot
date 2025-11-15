@@ -34,6 +34,11 @@ class Command(str, Enum):
     FIND_NOTE = "find-note"
     EDIT_NOTE = "edit-note"
     DELETE_NOTE = "delete-note"
+    ADD_NOTE_TAG = "add-note-tag"
+    DELETE_NOTE_TAG = "delete-note-tag"
+    FIND_NOTE_BY_TAG = "find-note-by-tag"
+    SHOW_NOTES_ORDERED_BY_TAG_ASC = "show-notes-ordered-by-tag-asc"
+    SHOW_NOTES_ORDERED_BY_TAG_DESC = "show-notes-ordered-by-tag-desc"
     EXIT = "exit"
     CLOSE = "close"
 
@@ -94,7 +99,12 @@ class AssistantCLI:
               show-notes — list all notes
               find-note <text> — search notes by text
               edit-note <№> — note editing
-              delete-note <№> — delete note 
+              delete-note <№> — delete note
+              add-note-tag <№> <tag> — attach a tag to a note
+              delete-note-tag <№> <tag> — remove a tag from a note
+              find-note-by-tag <tag> — search notes by tag
+              show-notes-ordered-by-tag-asc — notes sorted ascending by tag
+              show-notes-ordered-by-tag-desc — notes sorted descending by tag
               exit | close — quit the program
             """
         ).strip()

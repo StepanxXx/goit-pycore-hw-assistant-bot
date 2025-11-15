@@ -32,6 +32,13 @@ def init_bot():
         Command.SHOW_NOTES: (handlers.show_notes, False, cli.warning_color),
         Command.EDIT_NOTE: (handlers.edit_note, True, cli.success_color),
         Command.DELETE_NOTE: (handlers.delete_note, True, cli.success_color),
+        Command.ADD_NOTE_TAG: (handlers.add_note_tag, True, cli.success_color),
+        Command.DELETE_NOTE_TAG: (handlers.delete_note_tag, True, cli.success_color),
+        Command.FIND_NOTE_BY_TAG: (handlers.find_note_by_tag, True, cli.warning_color),
+        Command.SHOW_NOTES_ORDERED_BY_TAG_ASC: \
+            (handlers.show_notes_tag_sorted, False, cli.warning_color),
+        Command.SHOW_NOTES_ORDERED_BY_TAG_DESC: \
+            (handlers.show_notes_tag_desc_sorted, False, cli.warning_color),
     }
 
     cli.print_message("Welcome to the assistant bot!", cli.info_color)
