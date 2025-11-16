@@ -13,7 +13,7 @@ class AssistantBotHandlers:
     """Encapsulates the contact management operations."""
 
     def __init__(self, book: AddressBook, notes: Notes) -> None:
-        """Store shared references to the address book and notes collections."""
+        """Store shared address book and notes references."""
         self.book = book
         self.notes = notes
 
@@ -31,7 +31,11 @@ class AssistantBotHandlers:
         """Return the full notes list formatted as a readable table."""
         if self.notes:
             rows = self.notes.show()
-            return tabulate(rows, headers=["№","Tags","Note"], tablefmt="plain")
+            return tabulate(
+                rows,
+                headers=["№", "Tags", "Note"],
+                tablefmt="plain",
+            )
         return "Notes are empty."
 
     @input_error
@@ -66,7 +70,11 @@ class AssistantBotHandlers:
         matches = self.notes.find(query)
         if not matches:
             return f"No notes found for '{query}'."
-        return tabulate(matches, headers=["№","Tags","Note"], tablefmt="plain")
+        return tabulate(
+            matches,
+            headers=["№", "Tags", "Note"],
+            tablefmt="plain",
+        )
 
     @input_error
     def add_note_tag(self, args):
@@ -103,20 +111,28 @@ class AssistantBotHandlers:
         matches = self.notes.find_by_tag(tag)
         if not matches:
             return f"No notes found for tag '{tag}'."
-        return tabulate(matches, headers=["№","Tags","Note"], tablefmt="plain")
+        return tabulate(
+            matches,
+            headers=["№", "Tags", "Note"],
+            tablefmt="plain",
+        )
 
     @input_error
     def show_notes_tag_sorted(self, reverse: bool = False):
         """Display all notes sorted by their tag string, asc by default."""
         if self.notes:
             rows = self.notes.sort_by_tag(reverse)
-            return tabulate(rows, headers=["№","Tags","Note"], tablefmt="plain")
+            return tabulate(
+                rows,
+                headers=["№", "Tags", "Note"],
+                tablefmt="plain",
+            )
         return "Notes are empty."
 
     @input_error
     def show_notes_tag_desc_sorted(self):
-        """Display all notes desc sorted by their tag string"""
-        return self.show_notes_tag_sorted(reverse = True)
+        """Display all notes sorted by tag string in descending order."""
+        return self.show_notes_tag_sorted(reverse=True)
 
     @input_error
     def add_contact(self, args):
@@ -161,10 +177,17 @@ class AssistantBotHandlers:
         contact = self.book.find(name)
         if contact is None:
             return f'Contact "{name}" does not exist.'
-        if len(contact.emails) <= 0:
+        if not contact.emails:
             return f'The contact "{name}" has no emails.'
-        rows = [[contact.name.value, str(email)] for email in contact.emails]
-        return tabulate(rows, headers=["Name", "Email"], tablefmt="plain")
+        rows = [
+            [contact.name.value, str(email)]
+            for email in contact.emails
+        ]
+        return tabulate(
+            rows,
+            headers=["Name", "Email"],
+            tablefmt="plain",
+        )
 
     @input_error
     def change_email(self, args):
@@ -211,24 +234,46 @@ class AssistantBotHandlers:
         contact = self.book.find(name)
         if contact is None:
             return f'Contact "{name}" does not exist.'
-        if len(contact.phones) <= 0:
+        if not contact.phones:
             return f'The contact "{name}" has no phones.'
-        rows = [[contact.name.value, str(phone)] for phone in contact.phones]
-        return tabulate(rows, headers=["Name", "Phone"], tablefmt="plain")
+        rows = [
+            [contact.name.value, str(phone)]
+            for phone in contact.phones
+        ]
+        return tabulate(
+            rows,
+            headers=["Name", "Phone"],
+            tablefmt="plain",
+        )
 
     def __get_contacts(self, contacts: List[Record]):
         """Convert contact objects to table rows with all key fields."""
         rows = []
         for contact in contacts:
-            phones = ", ".join(str(phone) for phone in contact.phones) if contact.phones else "-"
+            phones = "-"
+            if contact.phones:
+                phones = ", ".join(str(phone) for phone in contact.phones)
+
+            emails = "-"
+            if contact.emails:
+                emails = ", ".join(str(email) for email in contact.emails)
+
             birthday = str(contact.birthday) if contact.birthday else "-"
-            emails = ", ".join(str(email) for email in contact.emails) if contact.emails else "-"
-            rows.append([contact.name.value, birthday, phones, emails, contact.address or "-"])
+
+            rows.append(
+                [
+                    contact.name.value,
+                    birthday,
+                    phones,
+                    emails,
+                    contact.address or "-",
+                ]
+            )
         return rows
 
     @input_error
     def search_contact(self, args):
-        """Search contacts matching a query across names, phones, and emails."""
+        """Search contacts that match names, phones, or emails."""
         query = " ".join(args)
         if not query:
             return "Search query is empty."
@@ -237,8 +282,8 @@ class AssistantBotHandlers:
             return f"No contacts found for '{query}'."
         return tabulate(
             rows,
-            headers=["Name", "Birthday", "Phones", "Emails", "address"],
-            tablefmt="plain"
+            headers=["Name", "Birthday", "Phones", "Emails", "Address"],
+            tablefmt="plain",
         )
 
     @input_error
@@ -249,8 +294,8 @@ class AssistantBotHandlers:
             return "Address book is empty."
         return tabulate(
             rows,
-            headers=["Name", "Birthday", "Phones", "Emails", "address"],
-            tablefmt="plain"
+            headers=["Name", "Birthday", "Phones", "Emails", "Address"],
+            tablefmt="plain",
         )
 
     @input_error
@@ -267,7 +312,7 @@ class AssistantBotHandlers:
     def show_birthday(self, args):
         """Display the birthday for a specified contact."""
         if not args:
-            return 'Contact name is empty.'
+            return "Contact name is empty."
         name = args[0]
         contact = self.book.find(name)
         if contact is None:
@@ -294,4 +339,8 @@ class AssistantBotHandlers:
         ]
         if not rows:
             return "No upcoming birthdays."
-        return tabulate(rows, headers=["Name", "Congratulation date"], tablefmt="plain")
+        return tabulate(
+            rows,
+            headers=["Name", "Congratulation date"],
+            tablefmt="plain",
+        )

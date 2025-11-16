@@ -3,6 +3,7 @@
 import pickle
 from pathlib import Path
 
+
 class AssistantBotStorage:
     """Handles serialization of the data to disk."""
 

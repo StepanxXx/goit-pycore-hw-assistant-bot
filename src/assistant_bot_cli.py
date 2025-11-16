@@ -57,13 +57,19 @@ class FirstWordCompleter(Completer):
         if " " in stripped_before_cursor or not stripped_before_cursor:
             return
 
-        word_before_cursor = text_before_cursor.split()[-1] if stripped_before_cursor else ""
+        if stripped_before_cursor:
+            word_before_cursor = text_before_cursor.split()[-1]
+        else:
+            word_before_cursor = ""
 
         word_lower = word_before_cursor.lower()
 
         for command in self.commands:
             if command.startswith(word_lower):
-                yield Completion(command, start_position=-len(word_before_cursor))
+                yield Completion(
+                    command,
+                    start_position=-len(word_before_cursor),
+                )
 
 
 class AssistantCLI:
@@ -72,7 +78,9 @@ class AssistantCLI:
     def __init__(self) -> None:
         self.prompt_style = Style.from_dict({"prompt": "#00aa00 bold"})
         self.prompt_message = [("class:prompt", "Enter a command: ")]
-        self.command_completer = FirstWordCompleter([command.value for command in Command])
+        self.command_completer = FirstWordCompleter(
+            [command.value for command in Command]
+        )
 
         self.default_color = Fore.WHITE
         self.info_color = Fore.CYAN
@@ -127,7 +135,9 @@ class AssistantCLI:
             style=self.prompt_style,
         )
 
-    def parse_input(self, user_input: str) -> Tuple[Optional["Command"], List[str]]:
+    def parse_input(
+        self, user_input: str
+    ) -> Tuple[Optional["Command"], List[str]]:
         """Parse raw user input into a command enum and arguments."""
         parts = user_input.split()
         if not parts:

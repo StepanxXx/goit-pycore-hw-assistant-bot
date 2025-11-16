@@ -1,16 +1,17 @@
 """Assistant bot orchestration module."""
 
+from src.address_book import AddressBook
 from src.assistant_bot_cli import AssistantCLI, Command
 from src.assistant_bot_handlers import AssistantBotHandlers
 from src.assistant_bot_storage import AssistantBotStorage
 from src.notes import Notes
-from src.address_book import AddressBook
+
 
 def init_bot():
     """Run the assistant bot CLI loop."""
     cli = AssistantCLI()
     storage = AssistantBotStorage()
-    book,notes = storage.load_data() or (AddressBook(), Notes())
+    book, notes = storage.load_data() or (AddressBook(), Notes())
     handlers = AssistantBotHandlers(book, notes)
 
     command_actions = {
@@ -25,7 +26,11 @@ def init_bot():
         Command.PHONES: (handlers.show_phones, True, cli.warning_color),
         Command.ALL: (handlers.show_all, False, cli.warning_color),
         Command.ADD_BIRTHDAY: (handlers.add_birthday, True, cli.success_color),
-        Command.SHOW_BIRTHDAY: (handlers.show_birthday, True, cli.warning_color),
+        Command.SHOW_BIRTHDAY: (
+            handlers.show_birthday,
+            True,
+            cli.warning_color,
+        ),
         Command.BIRTHDAYS: (handlers.show_birthdays, True, cli.warning_color),
         Command.ADD_NOTE: (handlers.add_note, True, cli.success_color),
         Command.FIND_NOTE: (handlers.find_note, True, cli.warning_color),
@@ -33,12 +38,26 @@ def init_bot():
         Command.EDIT_NOTE: (handlers.edit_note, True, cli.success_color),
         Command.DELETE_NOTE: (handlers.delete_note, True, cli.success_color),
         Command.ADD_NOTE_TAG: (handlers.add_note_tag, True, cli.success_color),
-        Command.DELETE_NOTE_TAG: (handlers.delete_note_tag, True, cli.success_color),
-        Command.FIND_NOTE_BY_TAG: (handlers.find_note_by_tag, True, cli.warning_color),
-        Command.SHOW_NOTES_ORDERED_BY_TAG_ASC: \
-            (handlers.show_notes_tag_sorted, False, cli.warning_color),
-        Command.SHOW_NOTES_ORDERED_BY_TAG_DESC: \
-            (handlers.show_notes_tag_desc_sorted, False, cli.warning_color),
+        Command.DELETE_NOTE_TAG: (
+            handlers.delete_note_tag,
+            True,
+            cli.success_color,
+        ),
+        Command.FIND_NOTE_BY_TAG: (
+            handlers.find_note_by_tag,
+            True,
+            cli.warning_color,
+        ),
+        Command.SHOW_NOTES_ORDERED_BY_TAG_ASC: (
+            handlers.show_notes_tag_sorted,
+            False,
+            cli.warning_color,
+        ),
+        Command.SHOW_NOTES_ORDERED_BY_TAG_DESC: (
+            handlers.show_notes_tag_desc_sorted,
+            False,
+            cli.warning_color,
+        ),
     }
     mutating_commands = {
         Command.ADD,
