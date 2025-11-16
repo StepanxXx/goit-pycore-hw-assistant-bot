@@ -1,9 +1,9 @@
 """Core data structures for storing contacts, notes, and search logic."""
 
 from collections import UserDict
-from datetime import datetime, date
-from typing import List
+from datetime import date, datetime
 import re
+from typing import List
 
 
 class Field:
@@ -35,6 +35,7 @@ class Name(Field):
 
 class Phone(Field):
     """Field responsible for validating and storing phone numbers."""
+
     def __init__(self, value: str):
         """Validate and store a phone consisting of exactly 12 digits."""
         if not isinstance(value, str):
@@ -48,12 +49,13 @@ class Phone(Field):
 
 class Email(Field):
     """Field that validates and stores email values."""
+
     def __init__(self, value: str):
         """Validate email value using a basic regex before storing."""
         if not isinstance(value, str):
             raise ValueError("Email must be a string")
         cleaned_value = value.strip()
-        regex_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        regex_pattern = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
         if re.fullmatch(regex_pattern, cleaned_value, flags=re.IGNORECASE):
             super().__init__(cleaned_value)
             return
@@ -62,6 +64,7 @@ class Email(Field):
 
 class Birthday(Field):
     """Field that stores birthday dates as `datetime.date` objects."""
+
     def __init__(self, value: str):
         """Parse a birthday string and ensure it is not a future date."""
         try:
@@ -69,7 +72,7 @@ class Birthday(Field):
         except ValueError as exc:
             raise ValueError("Invalid date format. Use DD.MM.YYYY") from exc
         if birthday_date > datetime.now().date():
-                raise ValueError("Date must be in the past.")
+            raise ValueError("Date must be in the past.")
         super().__init__(birthday_date)
 
     def __str__(self):
@@ -79,12 +82,13 @@ class Birthday(Field):
 
 class Record:
     """Represents a contact and aggregates all related details."""
+
     def __init__(self, name: str):
         """Initialize a contact record with optional detail containers."""
         self.name = Name(name)
         self.phones: List[Phone] = []
-        self.birthday: Birthday = None
-        self.address: str = None
+        self.birthday: Birthday | None = None
+        self.address: str | None = None
         self.emails: List[Email] = []
 
     def add_phone(self, phone_number: str) -> None:
@@ -143,14 +147,20 @@ class Record:
 
     def __str__(self):
         """Provide a human-readable dump of the record fields."""
-        return f"Contact name: {self.name.value}, \
-            address: {self.address} \
-            phones: {'; '.join(p.value for p in self.phones)} \
-            emails: {'; '.join(p.value for p in self.emails)}"
+        phones = "; ".join(phone.value for phone in self.phones) or "-"
+        emails = "; ".join(email.value for email in self.emails) or "-"
+        address = self.address or "-"
+        return (
+            f"Contact name: {self.name.value}, "
+            f"address: {address} "
+            f"phones: {phones} "
+            f"emails: {emails}"
+        )
 
 
 class Congratulation:
     """Helper object describing when to congratulate a contact."""
+
     def __init__(self, name: str, congratulation_date: str):
         """Store a congratulation reminder for a specific date."""
         self.name = name
@@ -162,29 +172,31 @@ class Congratulation:
 
     def __repr__(self):
         """Return a debug-friendly representation for the reminder."""
-        return f"Congratulation(name = \"{self.name}\"" \
-            ", congratulation_date = \"{self.congratulation_date}\")"
+        return (
+            f'Congratulation(name="{self.name}", '
+            f'congratulation_date="{self.congratulation_date}")'
+        )
 
 
 class AddressBook(UserDict):
     """Dictionary-like container that manages contact records."""
+
     def add_record(self, contact_record: Record) -> None:
         """Store or replace a contact by its name key."""
         self.data[str(contact_record.name)] = contact_record
 
     def find(self, name: str) -> Record | None:
         """Return the contact record matching the provided name."""
-        if name in self.data:
-            return self.data[name]
-        return None
+        return self.data.get(name)
 
     def delete(self, name: str) -> Record | None:
         """Remove a contact entry and return it if found."""
-        if name in self.data:
-            return self.data.pop(name)
+        return self.data.pop(name, None)
 
-    def __get_birthday_this_year(self, birthday, year) -> None:
-        """Return a date object for this year's birthday (handles leap years)."""
+    def __get_birthday_this_year(
+        self, birthday: date, year: int
+    ) -> date | None:
+        """Return this year's birthday date (handles leap years)."""
         try:
             return date(year, birthday.month, birthday.day)
         except ValueError:
@@ -192,15 +204,24 @@ class AddressBook(UserDict):
                 return date(year, 2, 28)
             return None
 
-    def __get_next_birthday(self, birthday, today):
+    def __get_next_birthday(
+        self, birthday: date, today: date
+    ) -> date | None:
         """Determine the next birthday date relative to `today`."""
-        birthday_this_year = self.__get_birthday_this_year(birthday, today.year)
+        birthday_this_year = self.__get_birthday_this_year(
+            birthday, today.year
+        )
         if birthday_this_year and birthday_this_year >= today:
             return birthday_this_year
-        birthday_next_year = self.__get_birthday_this_year(birthday, today.year + 1)
+        birthday_next_year = self.__get_birthday_this_year(
+            birthday,
+            today.year + 1,
+        )
         return birthday_next_year
 
-    def get_upcoming_birthdays(self, count_days: int = 7) -> List[Congratulation]:
+    def get_upcoming_birthdays(
+        self, count_days: int = 7
+    ) -> List[Congratulation]:
         """Collect congratulation reminders for birthdays within the window."""
         today = datetime.today().date()
         result: List[Congratulation] = []
@@ -219,11 +240,16 @@ class AddressBook(UserDict):
 
             delta_days = (birthday_date - today).days
             if 0 <= delta_days <= count_days:
-                result.append(Congratulation(name, birthday_date.strftime("%d.%m.%Y")))
+                result.append(
+                    Congratulation(
+                        name,
+                        birthday_date.strftime("%d.%m.%Y"),
+                    )
+                )
 
         return result
 
-    def search(self, query: str):
+    def search(self, query: str) -> List[Record]:
         """Find contacts whose name, phone, or email contains the query."""
         contacts = []
         for contact_record in self.data.values():
@@ -246,7 +272,7 @@ class AddressBook(UserDict):
 
 
 if __name__ == "__main__":
-# Створення нової адресної книги
+    # Створення нової адресної книги
     book = AddressBook()
 
     # Створення запису для John
@@ -276,11 +302,13 @@ if __name__ == "__main__":
     john = book.find("John")
     john.edit_phone("123456789012", "111222333312")
 
-    print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
+    # Виведення: Contact name: John, phones: 1112223333; 5555555555
+    print(john)
 
     # Пошук конкретного телефону у записі John
     found_phone = john.find_phone("555555555512")
-    print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
+    # Виведення: 5555555555
+    print(f"{john.name}: {found_phone}")
 
     # Видалення запису Jane
     book.delete("Jane")

@@ -2,6 +2,7 @@
 
 from collections import UserList
 
+
 class Tags(UserList[str]):
     """Normalized collection of unique tags for a note."""
 
@@ -22,6 +23,7 @@ class Tags(UserList[str]):
         """Return comma-separated string of sorted tags."""
         return ", ".join(sorted(self.data))
 
+
 class Note:
     """Message-like entity that stores note text and its tags."""
 
@@ -41,6 +43,7 @@ class Note:
         if not value.strip():
             raise ValueError("Note text is empty")
         self.__value = value
+
 
 class Notes(UserList[Note]):
     """Collection of notes supporting CRUD operations and tag lookups."""
@@ -100,5 +103,5 @@ class Notes(UserList[Note]):
                 for idx, note in enumerate(self.data)
             ],
             key=lambda note: note[1],
-            reverse = reverse
+            reverse=reverse,
         )
