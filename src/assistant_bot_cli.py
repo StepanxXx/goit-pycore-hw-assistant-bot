@@ -50,14 +50,15 @@ class FirstWordCompleter(Completer):
         self.commands = commands
 
     def get_completions(self, document, complete_event):
-        text_before_cursor = document.text_before_cursor
+        text_before_cursor = document.current_line
         stripped_before_cursor = text_before_cursor.lstrip()
 
         # Disable completion after the user starts typing arguments.
-        if " " in stripped_before_cursor:
+        if " " in stripped_before_cursor or not stripped_before_cursor:
             return
 
-        word_before_cursor = document.get_word_before_cursor()
+        word_before_cursor = text_before_cursor.split()[-1] if stripped_before_cursor else ""
+
         word_lower = word_before_cursor.lower()
 
         for command in self.commands:
