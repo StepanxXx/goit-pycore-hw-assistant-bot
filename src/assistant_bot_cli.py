@@ -54,7 +54,7 @@ class FirstWordCompleter(Completer):
         stripped_before_cursor = text_before_cursor.lstrip()
 
         # Disable completion after the user starts typing arguments.
-        if " " in stripped_before_cursor or not stripped_before_cursor:
+        if " " in stripped_before_cursor:
             return
 
         if stripped_before_cursor:
